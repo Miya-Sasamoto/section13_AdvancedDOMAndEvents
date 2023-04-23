@@ -122,7 +122,7 @@ console.log(getComputedStyle(message).height); //49px
 message.style.height =
  Number.parseFloat(getComputedStyle(message).height,10) + 50 + "px";
 
-document.documentElement.style.setProperty('--color-primary','orangered');
+// document.documentElement.style.setProperty('--color-primary','orangered');
 //--color-primaryを使っている数カ所がorangeredになる
 
 //attribute 属性
@@ -165,3 +165,59 @@ console.log(logo.dataset.versionNumber); //3.0
 logo.className = "Miya";
  ///クラス名がmiyaになりました！　
 //しかしこれは絶対に使わないでください！なぜなら既存のクラスを上書きしてしまうからです。
+
+/////////////////////////////////////////////////////
+//188.Implementing Smooth Scrolling
+//
+const btnScrollTo = document.querySelector(".btn--scroll-to");
+//ボタンを選択
+const section1 = document.querySelector("#section--1");
+//ボタンを押したときの移動先
+
+btnScrollTo.addEventListener("click",function(e){
+  const s1coords = section1.getBoundingClientRect();
+  //getBoundingClientRect()はその要素の寸法、及び相対位置に関する情報を返す
+  // console.log(s1coords);
+  //
+  // console.log(e.target.getBoundingClientRect());
+
+  console.log("Current Scroll (X/Y)",window.pageXOffset,pageYOffset);
+  //これはページがどれだけスクロールされているかを知ることができる。
+  //ページの一番上だったら、x/y は0/0になる
+  //今は全然わかりませんが、これが、ある種のアプリケーションだと、非常に重要になります。
+  console.log("heigth/width viewport",
+  document.documentElement.clientHeight,
+  document.documentElement.clientWidth
+);
+//これはビューポートの大きさを知ることができます。
+//そしてビューポートとは、そこの画面の大きさです。
+//chromeの検証ページを大きくしたらビューポートは小さくなります。
+
+//スクロール
+// window.scrollTo(s1coords.left,s1coords.top);
+//これだと、s1coordsの一番先頭に、ボタンを押すと、ふいっと移動する（アニメーション話）
+//(ボタンをクリックするのは、ページの一番先頭まで戻してから)
+//section1は#section--1です（ID)
+//しかしこのままでは、2回目にそのボタンをクリックすると、全然違うところになります。
+//理由は、この第二引数にあるs1coords.topの指定場所pxはあくまでも相対的であり、いつまでもその場所というわけではないからです
+//↓改善策　
+// window.scrollTo(
+//   s1coords.left + window.pageXOffset,
+//   s1coords.top + window.pageYOffset
+// );
+// //これでページのどこにいたとしてもそのボタンをクリックすればsection1の先頭に来るように書くことができました。
+
+// window.scrollTo({
+//   left: s1coords.left + window.pageXOffset,
+//   top: s1coords.top + window.pageYOffset,
+//   behavior :'smooth'
+//   //スーーって移動するよ。他にあるって思ったけどsmoothしかないみたい。
+// });
+
+//実は上記のスクロールのやり方は古いやり方です。
+//これから新しいやり方を紹介します。
+
+section1.scrollIntoView({behavior: "smooth"});
+//実はこれだけで移動できます。
+
+});
