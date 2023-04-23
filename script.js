@@ -221,3 +221,39 @@ section1.scrollIntoView({behavior: "smooth"});
 //実はこれだけで移動できます。
 
 });
+
+
+/////////////////////////////////////////////////////
+//189.Types of Events and Event Handlers
+
+//イベントを設定するのはいくつかの方法があります。
+//１つ目。いつもやっているみたいな感じ
+const h1 = document.querySelector('h1');
+// h1.addEventListener('mouseenter',function(e){
+//   alert("addEventLisener: Great! You are reading the hading :D");
+//   //mouseenterはcssのhoverと少し似ている。マウスを上に置くだけで反応する。
+// });
+//
+// //2つ目　　オンイベントプロパティを要素に直接使用するやり方
+// h1.onmouseenter = function(e){
+//   alert("onmouseenter: Great! You are reading the hading :D");
+// };
+//functionを書かなくても、これで先ほどと同じように反応します。
+//しかし、これはやり方が古いので、addEventLisenerの方がよく使われていますよ。
+//どうして addEventListenerの方が使われているかというと、
+//①同じイベントに対して複数のイベントリスナーを追加できるから(単純に関数を変更したりすることができ)
+//② イベントが必要なくなった時に、それを削除できるという点
+//先程のやり方で実践してみました。
+//まず、関数の部分を新しい変数を作ってそこに格納する。
+const alertH1 = function(e){
+  alert("addEventLisener: Great! You are reading the hading !!");
+  // h1.removeEventListener('mouseenter',alertH1);
+  ///removeEventListenerというのは、そのイベントを一回ポッキリで終わらせることができる。　
+}
+//イベントハンドラーのところに、第二引数として、先程作った変数を入れる
+h1.addEventListener('mouseenter',alertH1);
+
+setTimeout(() => h1.removeEventListener('mouseenter',alertH1),10000);
+//setTimeoutを使えば、『何秒後に、そのイベントを消す』みたいなこともできます。
+//この場合は10秒後です
+//他に、htmlそのものを消す方法もあるが、使って欲しくないそうなので、見るだけにします。
