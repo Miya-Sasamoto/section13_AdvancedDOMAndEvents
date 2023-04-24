@@ -288,7 +288,7 @@ logo.className = "Miya";
 
 //イベントを設定するのはいくつかの方法があります。
 //１つ目。いつもやっているみたいな感じ
-const h1 = document.querySelector('h1');
+// const h1 = document.querySelector('h1');1
 // h1.addEventListener('mouseenter',function(e){
 //   alert("addEventLisener: Great! You are reading the hading :D");
 //   //mouseenterはcssのhoverと少し似ている。マウスを上に置くだけで反応する。
@@ -367,3 +367,58 @@ const h1 = document.querySelector('h1');
 //   //DOMの勉強でした。　　
 //   console.log("NAV",e.target,e.currentTarget);
 // });
+
+
+// /////////////////////////////////////////////////////
+// //193.DOM Traversing （DOMの横断）
+
+const h1 = document. querySelector('h1');
+//下へ下へ。子要素の選択
+console.log(h1.querySelectorAll('.highlight'));
+//これだと、h1要素の中にある「highlight」クラスを選択。この場合は2つあるからquerySelectorAllになります。
+//これが子要素に下にしたに入っていく選択の仕方になります。
+console.log(h1.childNodes);
+//h1のしたにある全てのものが取得できる。コメントを残しているとかもわかる
+console.log(h1.children);
+//これはjsライブラリなので、<>で囲われているところが出るって感じかな。
+h1.firstElementChild.style.color = 'white';
+//h1の最初の要素の色が白色になりました。
+h1.lastElementChild.style.color = 'blue';
+//h1の最後の要素の色が青くなりました。
+
+//上に上に。親要素の選択
+console.log(h1.parentNode);
+//この場合はheaderのtitle_headerが選択されます。
+console.log(h1.parentElement);
+//この場合は普通に一つ上の要素なのでdivです
+
+//しかし、残念ながらほとんどの場合、直接の親ではない親要素が必要になります。
+//言い換えると、どれだけ離れている場所うにあろうとも、それを見つける必要があるかもしれない
+h1.closest('.header').style.background = 'var(--gradient-secondary)';
+//これだと、h1に一番違いheaderクラスの背景をcssでスタイリングしているこの色に変える。
+h1.closest('h1').style.background = 'var(--gradient-primary)';
+//これだと、まぁ普通にこれだからその要素が選択されますよね。
+//そう考えると、closestはquerySelectorの反対であると考えることができる
+//querySelectorはDOMツリーの深さに関係なく、その値を探すことができるの。
+//closestは親を見つけることができるからだ！
+
+//横に横に.兄弟の選択
+//jsではなぜか直接の兄弟にしかアクセスできません。なんてこった。
+console.log(h1.previousElementSibling);
+//ここではnullになる。名前の通りその前の兄弟を見つけるから。この場合はh1が最初だから兄はいない
+console.log(h1.nextElementSibling);
+//これはh4の要素が選択される。次に書いてあるからね。
+//あまり使うことはないんだけど↓
+console.log(h1.previousSibling);
+//#text
+console.log(h1.nextSibling);
+//#text
+
+//使えるトリックとしては、親要素にアクセスしてから全ての子要素にアクセスする、というやり方もあります。
+console.log(h1.parentElement.children);
+//親要素に移動し、そこから要素をつかむ。
+//h1（自分も含める）、h4,button,img
+[...h1.parentElement.children].forEach(function(el){
+  if (el !== h1) el.style.transform = 'scale(0.5)';
+});
+//配列に入れて、h1以外の要素をtransformを設定し、縮小した。。。
