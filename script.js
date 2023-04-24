@@ -95,6 +95,54 @@ document.querySelector('.nav__links').addEventListener('click',function(e){//nav
 });
 //これでできました！大変！
 
+//194.Building a Tabbed Component
+//タブの切り替えができる
+const tabs = document.querySelectorAll('.operations__tab');
+//operations__tab は３つのタブ切り替えボタンにそれぞれつけられている。
+const tabsContainer = document.querySelector('.operations__tab-container');
+//operations__tab-containerは3つのボタンの共通の親要素
+const tabsContent = document.querySelectorAll('.operations__content');
+//operations__contentは文字が書いてあるところ。
+
+// tabs.forEach(t => t.addEventListener('click',() =>
+//   console.log('TAB')
+// ));
+// //前回もやりましたが、この方法はあまり良くない方法です。
+
+//親要素にイベントをつけます。
+tabsContainer.addEventListener('click',function(e){
+  //マッチングをここにつける
+  // const clicked = e.target;
+  // console.log(clicked);
+  //実はこれだと、<span>とかもコンソールに出てしまう。
+  //要素の中に要素があると、こんなことになります。
+  //必要なのは、button要素だけです
+  const clicked = e.target.closest('.operations__tab');
+  //どうしてclosestかというと、一番近い.operations__tabを取得してくれるから。
+  //そうなると、ここでは常にbuttonを選択してくれます。
+
+  //以下、これは、ボタンじゃなくて親要素をクリックした場合、親要素である.operations__tabが見つからなくてnullになってエラーが出るため、
+  if(!clicked)return;
+  //クリックされなかったら(!だからね)、何も起きないようにここでガードする
+
+  //目に見えているタブは、常に-activeがクラス名についてます。
+  //ただ、目に見えているもの一つだけにactiveクラスがついていますので、一回全部bのactiveクラスを取り除いてから、クリックされたものに再度付けるオペレーションを取ります。
+  // ---REMOVE CLASSES ---
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  //一回tabsの全てのクラスから、tab-activeをとる。
+  tabsContent.forEach(c => c.classList.remove('operations__content--active'));
+  //下の文字が書いてあるところからもactiveクラスを取るようにここで書く
+
+  clicked.classList.add('operations__tab--active');
+  //押されたタブのクラスにこのoperations__content--activeをつける操作
+
+  //どのコンテンツエリアを表示するかはdata属性に書かれてあります。
+  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
+  //datasetはdataから始まる属性を一気に取得するやり方です。
+  //data-tab="1"というように3つのタブそれぞれに書いてありますから、それを取得できるようにdataset.tabに書かれている数字、と描きます。
+  //そしてそれにクラスにcontainer activeクラスを追加します。⇨container activeを付けるとhiddenが解ける
+});
+
 
 /////////////////////////////////////////////////////
 //185 How the DOM Really Works
