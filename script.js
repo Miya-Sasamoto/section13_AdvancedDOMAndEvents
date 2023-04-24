@@ -245,15 +245,15 @@ const h1 = document.querySelector('h1');
 //② イベントが必要なくなった時に、それを削除できるという点
 //先程のやり方で実践してみました。
 //まず、関数の部分を新しい変数を作ってそこに格納する。
-const alertH1 = function(e){
-  alert("addEventLisener: Great! You are reading the hading !!");
-  // h1.removeEventListener('mouseenter',alertH1);
-  ///removeEventListenerというのは、そのイベントを一回ポッキリで終わらせることができる。　
-}
-//イベントハンドラーのところに、第二引数として、先程作った変数を入れる
-h1.addEventListener('mouseenter',alertH1);
-
-setTimeout(() => h1.removeEventListener('mouseenter',alertH1),10000);
+// const alertH1 = function(e){
+//   alert("addEventLisener: Great! You are reading the hading !!");
+//   // h1.removeEventListener('mouseenter',alertH1);
+//   ///removeEventListenerというのは、そのイベントを一回ポッキリで終わらせることができる。　
+// }
+// //イベントハンドラーのところに、第二引数として、先程作った変数を入れる
+// h1.addEventListener('mouseenter',alertH1);
+//
+// setTimeout(() => h1.removeEventListener('mouseenter',alertH1),10000);
 //setTimeoutを使えば、『何秒後に、そのイベントを消す』みたいなこともできます。
 //この場合は10秒後です
 //他に、htmlそのものを消す方法もあるが、使って欲しくないそうなので、見るだけにします。
@@ -263,3 +263,47 @@ setTimeout(() => h1.removeEventListener('mouseenter',alertH1),10000);
 //JSのイベントには特筆すべき点が2つあります。『キャプチャリングフェーズ』と『バブリングフェーズ』です
 //座学だけど、要は、どのようにイベントが伝わっていくか。要素ないをくぐり抜けて行ったり。
 //DOMみたい
+
+/////////////////////////////////////////////////////
+//191.Event Propagation in Practice
+
+//rgb(255,255,255);白
+const randomInt = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1) + min);
+  //Math.floorは決められた数以下の最大の整数を出します。
+const randomColor = () =>
+  `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+//色コードrgbaって数字が0から255で表されるんだけど、それを乱数生成で色々な色になるように関数を作っている。
+//
+
+document.querySelector('.nav__link').addEventListener("click",function(e){
+  this.style.backgroundColor = randomColor();
+  //上の乱数を生成する関数を入れているので、背景がどんどん変わります。
+  console.log("LINK",e.target,e.currentTarget);
+  //e.targetはイベントがどこで発火したかを示す
+  //e.currentTargetはイベントを登録した要素。基本的にはそこのクラスが表示される
+  console.log(e.currentTarget === this); //trueとなる
+
+  //イベントの親要素への伝搬を止める方法
+  // e.stopPropagation(); //ほんとにその選択した要素だけになる
+  //あまり使わないでください。あまりいいアイデアではありませんから。
+});
+
+
+document.querySelector('.nav__links').addEventListener("click",function(e){
+  this.style.backgroundColor = randomColor();
+  //ここにやると、featuresも、そのコンテナも生成された乱数の背景色になる
+  //これがバブルアップ。基本的にそのイベントが全ての親要素でも発生したかのような状態になること。
+  //なので、器用に、コンテナのところを押して見ると、子要素の色は変わりません。
+  //子要素の色を変えたときは、バブルアップでその親要素までそれが伝搬してく
+  console.log("CONTAINER",e.target,e.currentTarget);
+
+});
+
+
+document.querySelector('.nav').addEventListener("click",function(e){
+  this.style.backgroundColor = randomColor();
+  //これも一緒。これが一番大きいコンテナだから、これだけやったら別にそのコンテナだけ色が変化する
+  //DOMの勉強でした。　　
+  console.log("NAV",e.target,e.currentTarget);
+},true);
