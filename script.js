@@ -8,6 +8,10 @@ const overlay = document.querySelector('.overlay');
 const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 //btn--show-modalクラスは、上と下2つある「アカウントを作りませんか？」のボタン。
+const btnScrollTo = document.querySelector(".btn--scroll-to");
+//これは{Learn more}のボタン
+const section1 = document.querySelector("#section--1");
+
 
 const openModal = function (e) {
   e.preventDefault(); //ここでpreventDeafaultにするわけは、htmlでここがhref=#になっているため、クリックすると自動的に上にスクロールされるのを防ぐため。
@@ -34,6 +38,62 @@ document.addEventListener('keydown', function (e) {
     closeModal();
   }
 });
+
+///セクション188で勉強したやつをここに移動してきました。
+//コード説明のコメントが見たい場合は下のところを参照してください
+
+btnScrollTo.addEventListener("click",function(e){
+  const s1coords = section1.getBoundingClientRect();
+
+  console.log("Current Scroll (X/Y)",window.pageXOffset,pageYOffset);
+  console.log("heigth/width viewport",
+  document.documentElement.clientHeight,
+  document.documentElement.clientWidth
+);
+//スクロール
+
+section1.scrollIntoView({behavior: "smooth"});
+//実はこれだけで移動できます。
+
+});
+
+//ページナビゲーション
+///192.Event Delegation: Implementing Page Navigation
+// document.querySelectorAll('.nav__link').forEach(function(el){
+//   //.nav__linkは三つありますからね。querySelectorAllです。
+//   el.addEventListener('click',function(e){
+//     //コールバック関数の中にコールバック関数がある
+//     //多分だけど、querySelectorAllにはイベントリスナーは使えないから、それをforeachのループで回して、それの要素にイベントリスナーを追加してく感じになっているんだと思う。
+//     e.preventDefault(); //実はこれを入れると、指定したURLまで動かなくなります。
+//     console.log("Link Check!");
+//
+//     //smooothなスクロールにしましょう。
+//     const id = this.getAttribute('href'); //getAttributeは指定された属性を返すんだよね。
+//     console.log(id);
+//
+//     document.querySelector(id).scrollIntoView({behavior: "smooth"});
+//     //こうやって、href属性を持たせてから、scrollIntoViewにするのは、navではよくある話です
+//   });
+// });
+//まぁこのやり方でもいいんですが、あまり効率が良くないですよね？（byJonas)
+//この場合は、要素が1つしかないですが、もしこれが10000とかあったらどうですか？
+
+//1.イベントの対象となる共通の親要素に、イベントリスナーを追加
+//2.その中でどの要素がイベントの鍵になったのかを判断
+document.querySelector('.nav__links').addEventListener('click',function(e){//nav__linkが今回の3つのボタンの共通の親要素です
+  // console.log(e.target);//これでイベントが発火した鍵を見つけられる　
+  e.preventDefault();
+
+//マッチングするかを見つける
+  if(e.target.classList.contains('nav__link')){
+    //これはclassListなので、引数に.はいらない！
+      console.log('check links!!!!!!');
+      const id = e.target.getAttribute('href');
+      //外側にあるので、thisではなくe.targetです
+      document.querySelector(id).scrollIntoView({behavior: "smooth"});
+  }
+});
+//これでできました！大変！
 
 
 /////////////////////////////////////////////////////
@@ -169,59 +229,59 @@ logo.className = "Miya";
 /////////////////////////////////////////////////////
 //188.Implementing Smooth Scrolling
 //
-const btnScrollTo = document.querySelector(".btn--scroll-to");
-//ボタンを選択
-const section1 = document.querySelector("#section--1");
-//ボタンを押したときの移動先
-
-btnScrollTo.addEventListener("click",function(e){
-  const s1coords = section1.getBoundingClientRect();
-  //getBoundingClientRect()はその要素の寸法、及び相対位置に関する情報を返す
-  // console.log(s1coords);
-  //
-  // console.log(e.target.getBoundingClientRect());
-
-  console.log("Current Scroll (X/Y)",window.pageXOffset,pageYOffset);
-  //これはページがどれだけスクロールされているかを知ることができる。
-  //ページの一番上だったら、x/y は0/0になる
-  //今は全然わかりませんが、これが、ある種のアプリケーションだと、非常に重要になります。
-  console.log("heigth/width viewport",
-  document.documentElement.clientHeight,
-  document.documentElement.clientWidth
-);
-//これはビューポートの大きさを知ることができます。
-//そしてビューポートとは、そこの画面の大きさです。
-//chromeの検証ページを大きくしたらビューポートは小さくなります。
-
-//スクロール
-// window.scrollTo(s1coords.left,s1coords.top);
-//これだと、s1coordsの一番先頭に、ボタンを押すと、ふいっと移動する（アニメーション話）
-//(ボタンをクリックするのは、ページの一番先頭まで戻してから)
-//section1は#section--1です（ID)
-//しかしこのままでは、2回目にそのボタンをクリックすると、全然違うところになります。
-//理由は、この第二引数にあるs1coords.topの指定場所pxはあくまでも相対的であり、いつまでもその場所というわけではないからです
-//↓改善策　
-// window.scrollTo(
-//   s1coords.left + window.pageXOffset,
-//   s1coords.top + window.pageYOffset
+// const btnScrollTo = document.querySelector(".btn--scroll-to");
+// //ボタンを選択
+// const section1 = document.querySelector("#section--1");
+// //ボタンを押したときの移動先
+//
+// btnScrollTo.addEventListener("click",function(e){
+//   const s1coords = section1.getBoundingClientRect();
+//   //getBoundingClientRect()はその要素の寸法、及び相対位置に関する情報を返す
+//   // console.log(s1coords);
+//   //
+//   // console.log(e.target.getBoundingClientRect());
+//
+//   console.log("Current Scroll (X/Y)",window.pageXOffset,pageYOffset);
+//   //これはページがどれだけスクロールされているかを知ることができる。
+//   //ページの一番上だったら、x/y は0/0になる
+//   //今は全然わかりませんが、これが、ある種のアプリケーションだと、非常に重要になります。
+//   console.log("heigth/width viewport",
+//   document.documentElement.clientHeight,
+//   document.documentElement.clientWidth
 // );
-// //これでページのどこにいたとしてもそのボタンをクリックすればsection1の先頭に来るように書くことができました。
-
-// window.scrollTo({
-//   left: s1coords.left + window.pageXOffset,
-//   top: s1coords.top + window.pageYOffset,
-//   behavior :'smooth'
-//   //スーーって移動するよ。他にあるって思ったけどsmoothしかないみたい。
+// //これはビューポートの大きさを知ることができます。
+// //そしてビューポートとは、そこの画面の大きさです。
+// //chromeの検証ページを大きくしたらビューポートは小さくなります。
+//
+// //スクロール
+// // window.scrollTo(s1coords.left,s1coords.top);
+// //これだと、s1coordsの一番先頭に、ボタンを押すと、ふいっと移動する（アニメーション話）
+// //(ボタンをクリックするのは、ページの一番先頭まで戻してから)
+// //section1は#section--1です（ID)
+// //しかしこのままでは、2回目にそのボタンをクリックすると、全然違うところになります。
+// //理由は、この第二引数にあるs1coords.topの指定場所pxはあくまでも相対的であり、いつまでもその場所というわけではないからです
+// //↓改善策　
+// // window.scrollTo(
+// //   s1coords.left + window.pageXOffset,
+// //   s1coords.top + window.pageYOffset
+// // );
+// // //これでページのどこにいたとしてもそのボタンをクリックすればsection1の先頭に来るように書くことができました。
+//
+// // window.scrollTo({
+// //   left: s1coords.left + window.pageXOffset,
+// //   top: s1coords.top + window.pageYOffset,
+// //   behavior :'smooth'
+// //   //スーーって移動するよ。他にあるって思ったけどsmoothしかないみたい。
+// // });
+//
+// //実は上記のスクロールのやり方は古いやり方です。
+// //これから新しいやり方を紹介します。
+//
+// section1.scrollIntoView({behavior: "smooth"});
+// //実はこれだけで移動できます。
+//
 // });
-
-//実は上記のスクロールのやり方は古いやり方です。
-//これから新しいやり方を紹介します。
-
-section1.scrollIntoView({behavior: "smooth"});
-//実はこれだけで移動できます。
-
-});
-
+//
 
 /////////////////////////////////////////////////////
 //189.Types of Events and Event Handlers
@@ -264,46 +324,46 @@ const h1 = document.querySelector('h1');
 //座学だけど、要は、どのようにイベントが伝わっていくか。要素ないをくぐり抜けて行ったり。
 //DOMみたい
 
-/////////////////////////////////////////////////////
-//191.Event Propagation in Practice
-
-//rgb(255,255,255);白
-const randomInt = (min, max) =>
-  Math.floor(Math.random() * (max - min + 1) + min);
-  //Math.floorは決められた数以下の最大の整数を出します。
-const randomColor = () =>
-  `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
-//色コードrgbaって数字が0から255で表されるんだけど、それを乱数生成で色々な色になるように関数を作っている。
+// /////////////////////////////////////////////////////
+// //191.Event Propagation in Practice
 //
-
-document.querySelector('.nav__link').addEventListener("click",function(e){
-  this.style.backgroundColor = randomColor();
-  //上の乱数を生成する関数を入れているので、背景がどんどん変わります。
-  console.log("LINK",e.target,e.currentTarget);
-  //e.targetはイベントがどこで発火したかを示す
-  //e.currentTargetはイベントを登録した要素。基本的にはそこのクラスが表示される
-  console.log(e.currentTarget === this); //trueとなる
-
-  //イベントの親要素への伝搬を止める方法
-  // e.stopPropagation(); //ほんとにその選択した要素だけになる
-  //あまり使わないでください。あまりいいアイデアではありませんから。
-});
-
-
-document.querySelector('.nav__links').addEventListener("click",function(e){
-  this.style.backgroundColor = randomColor();
-  //ここにやると、featuresも、そのコンテナも生成された乱数の背景色になる
-  //これがバブルアップ。基本的にそのイベントが全ての親要素でも発生したかのような状態になること。
-  //なので、器用に、コンテナのところを押して見ると、子要素の色は変わりません。
-  //子要素の色を変えたときは、バブルアップでその親要素までそれが伝搬してく
-  console.log("CONTAINER",e.target,e.currentTarget);
-
-});
-
-
-document.querySelector('.nav').addEventListener("click",function(e){
-  this.style.backgroundColor = randomColor();
-  //これも一緒。これが一番大きいコンテナだから、これだけやったら別にそのコンテナだけ色が変化する
-  //DOMの勉強でした。　　
-  console.log("NAV",e.target,e.currentTarget);
-},true);
+// //rgb(255,255,255);白
+// const randomInt = (min, max) =>
+//   Math.floor(Math.random() * (max - min + 1) + min);
+//   //Math.floorは決められた数以下の最大の整数を出します。
+// const randomColor = () =>
+//   `rgb(${randomInt(0, 255)},${randomInt(0, 255)},${randomInt(0, 255)})`;
+// //色コードrgbaって数字が0から255で表されるんだけど、それを乱数生成で色々な色になるように関数を作っている。
+// //
+//
+// document.querySelector('.nav__link').addEventListener("click",function(e){
+//   this.style.backgroundColor = randomColor();
+//   //上の乱数を生成する関数を入れているので、背景がどんどん変わります。
+//   console.log("LINK",e.target,e.currentTarget);
+//   //e.targetはイベントがどこで発火したかを示す
+//   //e.currentTargetはイベントを登録した要素。基本的にはそこのクラスが表示される
+//   console.log(e.currentTarget === this); //trueとなる
+//
+//   //イベントの親要素への伝搬を止める方法
+//   // e.stopPropagation(); //ほんとにその選択した要素だけになる
+//   //あまり使わないでください。あまりいいアイデアではありませんから。
+// });
+//
+//
+// document.querySelector('.nav__links').addEventListener("click",function(e){
+//   this.style.backgroundColor = randomColor();
+//   //ここにやると、featuresも、そのコンテナも生成された乱数の背景色になる
+//   //これがバブルアップ。基本的にそのイベントが全ての親要素でも発生したかのような状態になること。
+//   //なので、器用に、コンテナのところを押して見ると、子要素の色は変わりません。
+//   //子要素の色を変えたときは、バブルアップでその親要素までそれが伝搬してく
+//   console.log("CONTAINER",e.target,e.currentTarget);
+//
+// });
+//
+//
+// document.querySelector('.nav').addEventListener("click",function(e){
+//   this.style.backgroundColor = randomColor();
+//   //これも一緒。これが一番大きいコンテナだから、これだけやったら別にそのコンテナだけ色が変化する
+//   //DOMの勉強でした。　　
+//   console.log("NAV",e.target,e.currentTarget);
+// });
