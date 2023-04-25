@@ -11,7 +11,14 @@ const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector(".btn--scroll-to");
 //これは{Learn more}のボタン
 const section1 = document.querySelector("#section--1");
-
+const nav = document.querySelector('.nav');
+//これは一番上部分のところ、全ての親部分にあたる。
+const tabs = document.querySelectorAll('.operations__tab');
+//operations__tab は３つのタブ切り替えボタンにそれぞれつけられている。
+const tabsContainer = document.querySelector('.operations__tab-container');
+//operations__tab-containerは3つのボタンの共通の親要素
+const tabsContent = document.querySelectorAll('.operations__content');
+//operations__contentは文字が書いてあるところ。
 
 const openModal = function (e) {
   e.preventDefault(); //ここでpreventDeafaultにするわけは、htmlでここがhref=#になっているため、クリックすると自動的に上にスクロールされるのを防ぐため。
@@ -97,12 +104,7 @@ document.querySelector('.nav__links').addEventListener('click',function(e){//nav
 
 //194.Building a Tabbed Component
 //タブの切り替えができる
-const tabs = document.querySelectorAll('.operations__tab');
-//operations__tab は３つのタブ切り替えボタンにそれぞれつけられている。
-const tabsContainer = document.querySelector('.operations__tab-container');
-//operations__tab-containerは3つのボタンの共通の親要素
-const tabsContent = document.querySelectorAll('.operations__content');
-//operations__contentは文字が書いてあるところ。
+
 
 // tabs.forEach(t => t.addEventListener('click',() =>
 //   console.log('TAB')
@@ -143,6 +145,65 @@ tabsContainer.addEventListener('click',function(e){
   //そしてそれにクラスにcontainer activeクラスを追加します。⇨container activeを付けるとhiddenが解ける
 });
 
+//Menuのところにホバーすると、他のところが色が薄くなっていくハンドラーを形成
+// nav.addEventListener('mouseover',function(e){
+//   if(e.target.classList.contains('nav__link')){
+//     const link = e.target;
+//     //linkはmouseoverした場所のnav_linkがあるところ
+//     const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+//     //navタブに一番近い.nav_linkのところ
+//     const logo = link.closest('.nav').querySelector('img');
+//     //これはnavタブに一番近いimgを選択（必然的にあのロゴになる）
+//
+//     //マウスオーバーしたところ以外のところが白く白濁するように。
+//     siblings.forEach(el => {
+//       if(el !== link) el.style.opacity = 0.5;
+//     });
+//     logo.style.opacity = 0.5;
+//   }
+// });　
+// //どうしてmouseenterではなくmouseoverかというと、mouseenterはバブルを発生させないので、伝搬しないんです。
+// //ただこれだけだと、mouseoverしたっきりで元に戻らないので、mouseoutメソッドがあります。
+// nav.addEventListener('mouseout',function(e){
+//   if(e.target.classList.contains('nav__link')){
+//     const link = e.target;
+//     //linkはmouseoverした場所のnav_linkがあるところ
+//     const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+//     //navタブに一番近い.nav_linkのところ
+//     const logo = link.closest('.nav').querySelector('img');
+//     //これはnavタブに一番近いimgを選択（必然的にあのロゴになる）
+//     //フォーカスが外れた後に元に戻るように
+//     siblings.forEach(el => {
+//       if(el !== link) el.style.opacity = 1;
+//     });
+//     logo.style.opacity = 1;
+//   }
+// });　
+//RE-WRIGHT
+//それでは今のコードでは被りも多いので、書き直してみましょう
+const handleHover = function(e,opacity){
+
+  if(e.target.classList.contains('nav__link')){
+    const link = e.target;
+    //linkはmouseoverした場所のnav_linkがあるところ
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    //navタブに一番近い.nav_linkのところ
+    const logo = link.closest('.nav').querySelector('img');
+    //これはnavタブに一番近いimgを選択（必然的にあのロゴになる）
+    //フォーカスが外れた後に元に戻るように
+    siblings.forEach(el => {
+      if(el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
+    //そうです、、もうthisがopacityになりました。不可思議現象
+  }
+}
+
+//カーソルを当てた時⇨opacityを0.5にする
+nav.addEventListener('mouseover',handleHover.bind(0.5));
+//bindは定義された関数に対して、thisを代入できるメソッドです。なのでこれはthisということになります。
+//カーソルが外れた時⇨opacityを1に戻す
+nav.addEventListener('mouseout',handleHover.bind(1));
 
 /////////////////////////////////////////////////////
 //185 How the DOM Really Works
