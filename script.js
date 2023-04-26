@@ -206,6 +206,31 @@ nav.addEventListener('mouseover',handleHover.bind(0.5));
 nav.addEventListener('mouseout',handleHover.bind(1));
 
 /////////////////////////////////////////////////////
+//196.Implementing a Sticky Navigation: The Scroll Event
+//あるところまで行くと、上部のメニューバーが固定されて（sticky）操作しやすくなるやり方
+
+const initialCoords = section1.getBoundingClientRect();
+//getBoundingClientRectは要素の寸法とそのビューポートに対する相対位置に関する情報を返す
+console.log(initialCoords);
+
+window.addEventListener('scroll',function(){
+  //スクロールイベントはwindowでイベント実装可能です
+  // console.log(e); これやると、少しいじるだけでめちゃめちゃコンソールに出てくるから厄介
+  // console.log(window.scrollY);
+  //stickyクラスと言うのがすでにcssで作られているので、それを活用します。
+
+  //それでは問題です。いつstickyイベントをどこまでスクロールした時に発火させるのでしょうか。
+  //でもwindow.sceollYの値をハードコードするのは危険です。なぜならその値はビューポートの大きさに依存しているから。人によって変わってきます
+  if (window.scrollY > initialCoords.top) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+  //どうしてnavにクラスをつけ外しするのかというと、そこが上部メニューの全ての要素の親だからである。
+  //これでできたよーーんニコニコ
+
+});
+
+
+
+/////////////////////////////////////////////////////
 //185 How the DOM Really Works
 //座学メモ
 //DOMとはjsとブラウザーの間にあるインターフェースのこと
@@ -223,75 +248,75 @@ nav.addEventListener('mouseout',handleHover.bind(1));
 //「継承」とは、すべての子ノードタイプが、すべての親ノードタイプのメソッド、プロパティにアクセスできるようになること
 
 
-/////////////////////////////////////////////////////
-//186..Selecting, Creating, and Deleting Elements
-//要素の選択の仕方
-console.log(document.documentElement);
-//これでdocument（html）要素を引っ張り出してくることができる
-console.log(document.head);
-//これでdocument（html）要素のhead部分を持って来れる
-console.log(document.body);
-//これでdocument（html）要素のbody部分を持って来れる
-
-const header = document.querySelector(".header");
-const allSections = document.querySelectorAll(".section");
-console.log(allSections);
-//querySelectorAllはその指定したクラスを持っているものすべてを選択する。
-
-document.getElementById("section--1");
-//このID名に一致するidを選ぶ。名前にIDが入っているから#はいらない
-const allButtons =  document.getElementsByTagName("button");
-console.log(allButtons);
-//これですべてのボタン要素を取り出す
-console.log(document.getElementsByClassName("btn"));
-//クラス名にbtnが入っているものは選択
-
-//要素の作成と挿入について
-const message = document.createElement("div");//div要素を作る
-message.classList.add("cookie-message");//そのdivのクラス名はcookie-messageにします
-// message.textContent = "We use cookied for improved functionality and analytics.";
-message.innerHTML =
-'We use cookied for improved functionality and analytics. <button class="btn btn--close--cookie">Got it </button>';
-//そのcookie-messageクラスには、上記のように書く
-//エラーがあって解消に時間がかかった、、、
-//innerHTMLの時は、ごっちゃになるから''と""は分けるようにしよう
-
-// header.prepend(message);
-///headerにmessageを追加する
-//prependはその選択された要素の最初の子として要素を追加する
-//この場合はheaderの一番最初に追加をするような感じ、
-// header.append(message);
-//その要素の一番最後に挿入する
-header.before(message);
-//名前の通り、headerよりも前におく
-// header.after(message);
-//headerの後におく
-
-//要素の削除の仕方
-//さっき作ったcookieのところにあるボタンをクリックしたら消えるようにしましょう。
-document.querySelector(".btn--close--cookie")
-.addEventListener("click",function(){
-  message.remove(); //このremoveで消すことができます
-  //実はこのremove()は割と新しい概念で、これができるまでDOMトラバースでparentnodeに行ってそのchildnodeを消すみたいなアップダウンをしていた
-});
+// /////////////////////////////////////////////////////
+// //186..Selecting, Creating, and Deleting Elements
+// //要素の選択の仕方
+// console.log(document.documentElement);
+// //これでdocument（html）要素を引っ張り出してくることができる
+// console.log(document.head);
+// //これでdocument（html）要素のhead部分を持って来れる
+// console.log(document.body);
+// //これでdocument（html）要素のbody部分を持って来れる
+//
+// const header = document.querySelector(".header");
+// const allSections = document.querySelectorAll(".section");
+// console.log(allSections);
+// //querySelectorAllはその指定したクラスを持っているものすべてを選択する。
+//
+// document.getElementById("section--1");
+// //このID名に一致するidを選ぶ。名前にIDが入っているから#はいらない
+// const allButtons =  document.getElementsByTagName("button");
+// console.log(allButtons);
+// //これですべてのボタン要素を取り出す
+// console.log(document.getElementsByClassName("btn"));
+// //クラス名にbtnが入っているものは選択
+//
+// //要素の作成と挿入について
+// const message = document.createElement("div");//div要素を作る
+// message.classList.add("cookie-message");//そのdivのクラス名はcookie-messageにします
+// // message.textContent = "We use cookied for improved functionality and analytics.";
+// message.innerHTML =
+// 'We use cookied for improved functionality and analytics. <button class="btn btn--close--cookie">Got it </button>';
+// //そのcookie-messageクラスには、上記のように書く
+// //エラーがあって解消に時間がかかった、、、
+// //innerHTMLの時は、ごっちゃになるから''と""は分けるようにしよう
+//
+// // header.prepend(message);
+// ///headerにmessageを追加する
+// //prependはその選択された要素の最初の子として要素を追加する
+// //この場合はheaderの一番最初に追加をするような感じ、
+// // header.append(message);
+// //その要素の一番最後に挿入する
+// header.before(message);
+// //名前の通り、headerよりも前におく
+// // header.after(message);
+// //headerの後におく
+//
+// //要素の削除の仕方
+// //さっき作ったcookieのところにあるボタンをクリックしたら消えるようにしましょう。
+// document.querySelector(".btn--close--cookie")
+// .addEventListener("click",function(){
+//   message.remove(); //このremoveで消すことができます
+//   //実はこのremove()は割と新しい概念で、これができるまでDOMトラバースでparentnodeに行ってそのchildnodeを消すみたいなアップダウンをしていた
+// });
 //これでボタンを押すと消えます。
 
 /////////////////////////////////////////////////////
 //187.Styles, Attributes and Classes
-message.style.backgroundColor = "#373834"; //濃いめのグレーみたい
-message.style.width = "120%";
+// message.style.backgroundColor = "#373834"; //濃いめのグレーみたい
+// message.style.width = "120%";
 
-console.log(message.style.height); //実はこれでは、値を取得することができ前ん。
-//なぜなら、ここで手動で行うことはインラインスタイルであるためです。はにゃ？
-//もし本当に必要であれば、このようにして値を取ることができます。
-console.log(getComputedStyle(message));//引数に値を渡してこれですべての情報を取ることができます、
-console.log(getComputedStyle(message).color); //rgb(187, 187, 187)
-console.log(getComputedStyle(message).height); //49px
-
-message.style.height =
- Number.parseFloat(getComputedStyle(message).height,10) + 50 + "px";
-
-// document.documentElement.style.setProperty('--color-primary','orangered');
+// console.log(message.style.height); //実はこれでは、値を取得することができ前ん。
+// //なぜなら、ここで手動で行うことはインラインスタイルであるためです。はにゃ？
+// //もし本当に必要であれば、このようにして値を取ることができます。
+// console.log(getComputedStyle(message));//引数に値を渡してこれですべての情報を取ることができます、
+// console.log(getComputedStyle(message).color); //rgb(187, 187, 187)
+// console.log(getComputedStyle(message).height); //49px
+//
+// message.style.height =
+//  Number.parseFloat(getComputedStyle(message).height,10) + 50 + "px";
+//
+// // document.documentElement.style.setProperty('--color-primary','orangered');
 //--color-primaryを使っている数カ所がorangeredになる
 
 //attribute 属性
@@ -481,53 +506,53 @@ logo.className = "Miya";
 // /////////////////////////////////////////////////////
 // //193.DOM Traversing （DOMの横断）
 
-const h1 = document. querySelector('h1');
-//下へ下へ。子要素の選択
-console.log(h1.querySelectorAll('.highlight'));
-//これだと、h1要素の中にある「highlight」クラスを選択。この場合は2つあるからquerySelectorAllになります。
-//これが子要素に下にしたに入っていく選択の仕方になります。
-console.log(h1.childNodes);
-//h1のしたにある全てのものが取得できる。コメントを残しているとかもわかる
-console.log(h1.children);
-//これはjsライブラリなので、<>で囲われているところが出るって感じかな。
-h1.firstElementChild.style.color = 'white';
-//h1の最初の要素の色が白色になりました。
-h1.lastElementChild.style.color = 'blue';
-//h1の最後の要素の色が青くなりました。
-
-//上に上に。親要素の選択
-console.log(h1.parentNode);
-//この場合はheaderのtitle_headerが選択されます。
-console.log(h1.parentElement);
-//この場合は普通に一つ上の要素なのでdivです
-
-//しかし、残念ながらほとんどの場合、直接の親ではない親要素が必要になります。
-//言い換えると、どれだけ離れている場所うにあろうとも、それを見つける必要があるかもしれない
-h1.closest('.header').style.background = 'var(--gradient-secondary)';
-//これだと、h1に一番違いheaderクラスの背景をcssでスタイリングしているこの色に変える。
-h1.closest('h1').style.background = 'var(--gradient-primary)';
-//これだと、まぁ普通にこれだからその要素が選択されますよね。
-//そう考えると、closestはquerySelectorの反対であると考えることができる
-//querySelectorはDOMツリーの深さに関係なく、その値を探すことができるの。
-//closestは親を見つけることができるからだ！
-
-//横に横に.兄弟の選択
-//jsではなぜか直接の兄弟にしかアクセスできません。なんてこった。
-console.log(h1.previousElementSibling);
-//ここではnullになる。名前の通りその前の兄弟を見つけるから。この場合はh1が最初だから兄はいない
-console.log(h1.nextElementSibling);
-//これはh4の要素が選択される。次に書いてあるからね。
-//あまり使うことはないんだけど↓
-console.log(h1.previousSibling);
-//#text
-console.log(h1.nextSibling);
-//#text
-
-//使えるトリックとしては、親要素にアクセスしてから全ての子要素にアクセスする、というやり方もあります。
-console.log(h1.parentElement.children);
-//親要素に移動し、そこから要素をつかむ。
-//h1（自分も含める）、h4,button,img
-[...h1.parentElement.children].forEach(function(el){
-  if (el !== h1) el.style.transform = 'scale(0.5)';
-});
+// const h1 = document. querySelector('h1');
+// //下へ下へ。子要素の選択
+// console.log(h1.querySelectorAll('.highlight'));
+// //これだと、h1要素の中にある「highlight」クラスを選択。この場合は2つあるからquerySelectorAllになります。
+// //これが子要素に下にしたに入っていく選択の仕方になります。
+// console.log(h1.childNodes);
+// //h1のしたにある全てのものが取得できる。コメントを残しているとかもわかる
+// console.log(h1.children);
+// //これはjsライブラリなので、<>で囲われているところが出るって感じかな。
+// h1.firstElementChild.style.color = 'white';
+// //h1の最初の要素の色が白色になりました。
+// h1.lastElementChild.style.color = 'blue';
+// //h1の最後の要素の色が青くなりました。
+//
+// //上に上に。親要素の選択
+// console.log(h1.parentNode);
+// //この場合はheaderのtitle_headerが選択されます。
+// console.log(h1.parentElement);
+// //この場合は普通に一つ上の要素なのでdivです
+//
+// //しかし、残念ながらほとんどの場合、直接の親ではない親要素が必要になります。
+// //言い換えると、どれだけ離れている場所うにあろうとも、それを見つける必要があるかもしれない
+// h1.closest('.header').style.background = 'var(--gradient-secondary)';
+// //これだと、h1に一番違いheaderクラスの背景をcssでスタイリングしているこの色に変える。
+// h1.closest('h1').style.background = 'var(--gradient-primary)';
+// //これだと、まぁ普通にこれだからその要素が選択されますよね。
+// //そう考えると、closestはquerySelectorの反対であると考えることができる
+// //querySelectorはDOMツリーの深さに関係なく、その値を探すことができるの。
+// //closestは親を見つけることができるからだ！
+//
+// //横に横に.兄弟の選択
+// //jsではなぜか直接の兄弟にしかアクセスできません。なんてこった。
+// console.log(h1.previousElementSibling);
+// //ここではnullになる。名前の通りその前の兄弟を見つけるから。この場合はh1が最初だから兄はいない
+// console.log(h1.nextElementSibling);
+// //これはh4の要素が選択される。次に書いてあるからね。
+// //あまり使うことはないんだけど↓
+// console.log(h1.previousSibling);
+// //#text
+// console.log(h1.nextSibling);
+// //#text
+//
+// //使えるトリックとしては、親要素にアクセスしてから全ての子要素にアクセスする、というやり方もあります。
+// console.log(h1.parentElement.children);
+// //親要素に移動し、そこから要素をつかむ。
+// //h1（自分も含める）、h4,button,img
+// [...h1.parentElement.children].forEach(function(el){
+//   if (el !== h1) el.style.transform = 'scale(0.5)';
+// });
 //配列に入れて、h1以外の要素をtransformを設定し、縮小した。。。
