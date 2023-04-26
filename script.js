@@ -273,8 +273,40 @@ const headerObserver = new IntersectionObserver(stickyNav, {
   threshold: 0,
   rootMargin: `-${navHeight}px`,
 });
+
 headerObserver.observe(header);
 
+//それぞれのセクションを、スクロールをしていくと、下からふわっと上がるようなクラスをつけたので、それを取り外していく作業です
+
+//下からひヒュッて出てくるようにする４つのセクションを管理
+const allSections = document.querySelectorAll('.section');
+
+//ロジック整理
+const revealSection = function(entries,observer){
+  const [entry] = entries;
+  console.log(entry);
+  //でテクノと入っていくのをtrueとfalseでコンソールから見ることができるよ
+  if(!entry.isIntersecting) return;
+  //このreturnを書かないと、一番最初のsectionのtargetに常にclassがついている状態になってしまう
+  entry.target.classList.remove('section--hidden');
+  //どのセクションが入ったのかが大事
+  observer.unobserve(entry.target);
+  //これを書くと、監視が取れて、ヒュッていうイベントは一回ポッキリになる、
+};
+
+//見え方を監視する
+const sectionObserver = new IntersectionObserver(revealSection,{
+  root:null,
+  threshold:0.15,
+});
+
+allSections.forEach(function(section){
+  sectionObserver.observe(section);
+  //全てのセクション（4つある）をそれぞれsectioとして監視する
+  //全てのセクションに手動で--hiddenクラスをつけるのではなく、JSでループしてつけるようにする
+  section.classList.add('section--hidden');
+  //これでループしたやつにこのhiddenクラスが追加されますね。
+});
 
 /////////////////////////////////////////////////////
 //185 How the DOM Really Works
