@@ -308,6 +308,45 @@ allSections.forEach(function(section){
   //これでループしたやつにこのhiddenクラスが追加されますね。
 });
 
+///199.Lazy Loading Images
+//画像の読み込みを遅延させることで、パフォーマンスを上げる
+
+//data-src(解像度の高い画像)を持っているimg要素だけがここで全て選択される
+const imgTarget = document.querySelectorAll('img[data-src]')
+// console.log(imgTarget); //ここでは3つの画像がlazyの対象です
+
+const loadImg = function(entries,observer){
+  const [entry] = entries; //なんかいっつもこれじゃんね
+  console.log(entry);//これでいつも確認しているよ
+
+  //交差していない時にはそのままにしていてや
+  if(!entry.isIntersecting) return;
+
+  //しかし、交差した場合、画像をdata-srcに置き換える必要があります
+  entry.target.src = entry.target.dataset.src;
+  //data-srcのようにdata属性がついているものは、dataset.でできるんだよ。
+
+  entry.target.addEventListener('load',function(){
+    //ぼやかしクラスを外す
+    entry.target.classList.remove('lazy-img');
+    //何度もいうが、classListだから.はいらない
+  });
+  //一回読み込んだので監視を外す
+  　observer.unobserve(entry.target);
+};
+
+
+const imgObserver = new IntersectionObserver(loadImg,{
+  root:null,
+  threshold:0,
+  rootMargin:'200px' //全てが見える前にはもうフルロードになっている
+});
+
+//それぞれに関しをつける
+imgTarget.forEach(img => imgObserver.observe(img));
+
+
+
 /////////////////////////////////////////////////////
 //185 How the DOM Really Works
 //座学メモ

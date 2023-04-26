@@ -112,6 +112,7 @@ img {
 .lazy-img {
   filter: blur(20px);
 }
+/* これは画像をぼやかしているlazyだから */
 
 /* NAVIGATION */
 .nav {
