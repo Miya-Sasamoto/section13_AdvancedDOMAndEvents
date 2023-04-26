@@ -225,9 +225,55 @@ window.addEventListener('scroll',function(){
   else nav.classList.remove('sticky');
   //どうしてnavにクラスをつけ外しするのかというと、そこが上部メニューの全ての要素の親だからである。
   //これでできたよーーんニコニコ
-
 });
 
+/////////////////////////////////////////////////////
+//197.A Better Way: The Intersection Observer API
+//前回やったstickyナビケーションを交差点オブザーバーを使用して実装してみましょう。
+//このオブザーバーによって、あるターゲット要素が他の要素と交差する「方法」
+//あるいはビューポートと交差する方法に対する変化を観察できます。
+
+// const obsCallback = function(entries,observer){
+//   //これは2つの関数で呼び出される.二つ目の引数は、下のIntersectionObserverで作ったコールバック関数が入ります。
+//   entries.forEach(entry => {
+//     console.log(entry);
+//     //これで、交差点オブザーバーのエントリーが出来上がっている
+//   });
+//
+// };
+//
+// const obsOption = {
+//   root: null,
+//   threshold: 0.1
+//   //rootはターゲットが交差している要素
+//   //thresholdは闘値。交差点の割合　10%表示された時に、コールバック関数が呼び出される
+//   //threshold:1.0の場合は、100%表示された時に呼び出されると言うこと
+//
+// };
+//
+// const observer =  new IntersectionObserver(obsCallback,obsOption);
+// //IntersectionObserver()は、特定の要素が可視領域に入ったかを検知するAPI
+// observer.observe(section1);
+
+//はいそれでは、stickyをナビゲーションするポイントはどこでしょうか？
+const header = document.querySelector('.header');
+const navHeight = nav.getBoundingClientRect().height;
+// console.log(navHeight);
+
+const stickyNav = function (entries) {
+  const [entry] = entries;
+  // console.log(entry);
+
+  if (!entry.isIntersecting) nav.classList.add('sticky');
+  else nav.classList.remove('sticky');
+};
+
+const headerObserver = new IntersectionObserver(stickyNav, {
+  root: null,
+  threshold: 0,
+  rootMargin: `-${navHeight}px`,
+});
+headerObserver.observe(header);
 
 
 /////////////////////////////////////////////////////
