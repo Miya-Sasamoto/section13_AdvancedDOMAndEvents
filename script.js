@@ -793,3 +793,32 @@ logo.className = "Miya";
 //   if (el !== h1) el.style.transform = 'scale(0.5)';
 // });
 //配列に入れて、h1以外の要素をtransformを設定し、縮小した。。。
+
+///////////////////////////////////////////
+//202.Lifecycle DOM Events
+//DOM contens loaded
+// document.addEventListener('DOMContentLoaded',function(e){
+//   //DOMContentLoadedは、最初のHTML文書の読み込みと、解析が完了し、DOMツリーの構築が完了した時点で発生します。
+//   console.log('HTML parsed and DOM tree built!',e);
+// });
+//しかし、これをやる必要はあるのだろうか？
+//HTMLの解析が終わった時に、これが発生するが、そもそもHTMLファイルで一番最後にscriptを読み込んでいると言うことはDOMContentLoadedを呼び出す必要はないだろう。だってすでにHTMLが読み込まれた後にscriptを読んでJSに映るわけだから必要はないよね。
+
+//Load イベント⇨ウィンドウによって発生します。
+window.addEventListener('load',function(e){
+  console.log('Page fully loaded',e);
+});
+//ロードイベントは、ページ全体が、スタイルシート、画像の全てのリソースを含めて読み込まれた時に発生。
+
+//beforeunloadイベント。消すと言うことを知らせる
+// window.addEventListener('beforeunload',function(e){
+//   //chromeは大丈夫だけど、いくつかのブラウザはこれをしないと。
+//   e.preventDefault();
+//   console.log(e);
+//   //returnValueを空にすることで、消すと言うことがわかる。
+//   e.returnValue = '';
+// });
+//これによって、「本当にこのサイトを離れますか？」と言うポップアップが出てきます。必ずこのメッセージです。編集はできません。
+//リソースがアンロード＝タブが閉じられる時に発生します。
+
+///悪用は絶対するな! by Jonas
