@@ -304,7 +304,7 @@ allSections.forEach(function(section){
   sectionObserver.observe(section);
   //全てのセクション（4つある）をそれぞれsectioとして監視する
   //全てのセクションに手動で--hiddenクラスをつけるのではなく、JSでループしてつけるようにする
-  section.classList.add('section--hidden');
+  // section.classList.add('section--hidden');
   //これでループしたやつにこのhiddenクラスが追加されますね。
 });
 
@@ -345,6 +345,71 @@ const imgObserver = new IntersectionObserver(loadImg,{
 //それぞれに関しをつける
 imgTarget.forEach(img => imgObserver.observe(img));
 
+/////////////////////////////////////////////////////
+//200.Building a Slider Component: Part 1
+//下のところにある3つのコメントをスライドするところを実装していくよ
+//3つのスライドを選択
+const slides = document.querySelectorAll('.slide');
+//スライドを動かす左側のボタン
+const btnLeft = document.querySelector('.slider__btn--left');
+//スライドを動かす右側のボタン
+const btnRight = document.querySelector('.slider__btn--right');
+
+//現在表示しているスライドは0。index = 0の状態から。表示するスライドは変わるのでletで宣言する
+let currentSlide = 0;
+//Max のスライド量をここで表す。
+const maxSlide = slides.length;
+
+
+
+//3つのスライドの共通の親部分
+const slider = document.querySelector('.slider');
+//見えやすくするために少しスケールダウン
+// slider.style.transform = 'scale(0.3)';
+//これで、右側に動いたスライドも見えるようにしました。
+// slider.style.overflow = 'visible';
+
+//右側に動かす関数を外部で宣言
+const gotoSlide = function(slide){
+  slides.forEach((s,i)=> (s.style.transform = `translateX(${100 *(i-slide)}%)`)
+  //１枚目は-100%,0%,100%,200%と右に行けば行くほどなる。
+  //アクティブなスライドは0%であると覚えてください。
+  //こうなります。多分応用効くね
+  );
+};
+gotoSlide(0);
+//今の上で作った関数の一番初期は0だね。
+
+const nextSlide = function(){
+  if(currentSlide === maxSlide -1){
+    //もし今のスライドがmaxSlideと同じなら、0に戻す
+    //どうしてmaxSlide -1かというと、0ベースにするためです
+    currentSlide = 0;
+  }else {
+    //現在のスライドをクリックするたびに一つずつ増やしていく。
+    currentSlide++;
+  };
+  gotoSlide(currentSlide);
+};
+
+const previousSlide = function(){
+  if(currentSlide === 0){
+    currentSlide = maxSlide-1;
+    //こうすることにより、一番端っこになったら、右端（一番大きいところ）にいく。
+  }else{
+    currentSlide--;
+  };
+
+  //左側にいくから--だね
+  gotoSlide(currentSlide);
+}
+
+//右側のボタンの実装 = 次のスライドに移動するためのもの
+btnRight.addEventListener('click',nextSlide);
+  //次のスライドに移動するのは、基本的にtransformのプロパティの値を変えるだけ
+  //translateX()の値を変えるだけ
+  //nextSlideは上に関数で定義したの
+btnLeft.addEventListener('click',previousSlide);
 
 
 /////////////////////////////////////////////////////
