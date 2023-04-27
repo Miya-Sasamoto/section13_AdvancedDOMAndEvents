@@ -348,69 +348,124 @@ imgTarget.forEach(img => imgObserver.observe(img));
 /////////////////////////////////////////////////////
 //200.Building a Slider Component: Part 1
 //下のところにある3つのコメントをスライドするところを実装していくよ
-//3つのスライドを選択
-const slides = document.querySelectorAll('.slide');
-//スライドを動かす左側のボタン
-const btnLeft = document.querySelector('.slider__btn--left');
-//スライドを動かす右側のボタン
-const btnRight = document.querySelector('.slider__btn--right');
+const slider = function(){
+  //3つのスライドを選択
+  const slides = document.querySelectorAll('.slide');
+  //スライドを動かす左側のボタン
+  const btnLeft = document.querySelector('.slider__btn--left');
+  //スライドを動かす右側のボタン
+  const btnRight = document.querySelector('.slider__btn--right');
+  //スライドの下に表示しておくドットの入るコンテナを選択
+  const dotContainer = document.querySelector('.dots');
 
-//現在表示しているスライドは0。index = 0の状態から。表示するスライドは変わるのでletで宣言する
-let currentSlide = 0;
-//Max のスライド量をここで表す。
-const maxSlide = slides.length;
+  //現在表示しているスライドは0。index = 0の状態から。
+  //表示するスライドは変わるのでletで宣言する
+  let currentSlide = 0;
+  //Max のスライド量をここで表す。
+  const maxSlide = slides.length;
 
-
-
-//3つのスライドの共通の親部分
-const slider = document.querySelector('.slider');
-//見えやすくするために少しスケールダウン
-// slider.style.transform = 'scale(0.3)';
-//これで、右側に動いたスライドも見えるようにしました。
-// slider.style.overflow = 'visible';
-
-//右側に動かす関数を外部で宣言
-const gotoSlide = function(slide){
-  slides.forEach((s,i)=> (s.style.transform = `translateX(${100 *(i-slide)}%)`)
-  //１枚目は-100%,0%,100%,200%と右に行けば行くほどなる。
-  //アクティブなスライドは0%であると覚えてください。
-  //こうなります。多分応用効くね
-  );
-};
-gotoSlide(0);
-//今の上で作った関数の一番初期は0だね。
-
-const nextSlide = function(){
-  if(currentSlide === maxSlide -1){
-    //もし今のスライドがmaxSlideと同じなら、0に戻す
-    //どうしてmaxSlide -1かというと、0ベースにするためです
-    currentSlide = 0;
-  }else {
-    //現在のスライドをクリックするたびに一つずつ増やしていく。
-    currentSlide++;
+  const createDots = function(){
+    slides.forEach(function(_,i){
+      //第一引数のslideは別に必要ないから、_の捨て変数でいい。
+        dotContainer.insertAdjacentHTML('beforeend',`<button class="dots__dot" data-slide="${i}"></button>`);
+    });
+    //insertAdjacentHTMLはjsでHTMLを作成するやり方だけど、このやり方大好きだよね。
+    //data-slideのところには、スライドのindexと一致するように、iで入れている
   };
-  gotoSlide(currentSlide);
-};
+  createDots(); //関数を呼ぶの忘れないで
 
-const previousSlide = function(){
-  if(currentSlide === 0){
-    currentSlide = maxSlide-1;
-    //こうすることにより、一番端っこになったら、右端（一番大きいところ）にいく。
-  }else{
-    currentSlide--;
+  //activeになっているドットを管理する関数(濃いグレーになるドット)
+  const activateDots = function(slide){
+    //dots__dotがついているクラスから、activeクラスをループして削除
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+
+  //ここむずい！currentSlideのindexがついているものにactiveクラスをつける関数
+    document.querySelector(`.dots__dot[data-slide="${slide}"]`).classList.add('dots__dot--active');
+  };
+  //初期値(最初に黒くしておくのは0番目)
+  activateDots(0);
+
+  //3つのスライドの共通の親部分
+  const slider = document.querySelector('.slider');
+  //見えやすくするために少しスケールダウン
+  // slider.style.transform = 'scale(0.3)';
+  //これで、右側に動いたスライドも見えるようにしました。
+  // slider.style.overflow = 'visible';
+
+
+  //右側に動かす関数を外部で宣言
+  const gotoSlide = function(slide){
+    slides.forEach((s,i)=> (s.style.transform = `translateX(${100 *(i-slide)}%)`)
+    //１枚目は-100%,0%,100%,200%と右に行けば行くほどなる。
+    //アクティブなスライドは0%であると覚えてください。
+    //こうなります。多分応用効くね
+    );
+  };
+  gotoSlide(0);
+  //今の上で作った関数の一番初期は0だね。
+
+  const nextSlide = function(){
+    if(currentSlide === maxSlide -1){
+      //もし今のスライドがmaxSlideと同じなら、0に戻す
+      //どうしてmaxSlide -1かというと、0ベースにするためです
+      currentSlide = 0;
+    }else {
+      //現在のスライドをクリックするたびに一つずつ増やしていく。
+      currentSlide++;
+    };
+    //ネクストだから、右側に動くように
+    gotoSlide(currentSlide);
+    //下のドットが合わせて動くように
+    activateDots(currentSlide);
   };
 
-  //左側にいくから--だね
-  gotoSlide(currentSlide);
-}
+  const previousSlide = function(){
+    if(currentSlide === 0){
+      currentSlide = maxSlide-1;
+      //こうすることにより、一番端っこになったら、右端（一番大きいところ）にいく。
+    }else{
+      //左側にいくから--だね
+      currentSlide--;
+    };
 
-//右側のボタンの実装 = 次のスライドに移動するためのもの
-btnRight.addEventListener('click',nextSlide);
-  //次のスライドに移動するのは、基本的にtransformのプロパティの値を変えるだけ
-  //translateX()の値を変えるだけ
-  //nextSlideは上に関数で定義したの
-btnLeft.addEventListener('click',previousSlide);
+    //previousだから前のスライドに行くように
+    gotoSlide(currentSlide);
+    //下のドットが合わせて動くように
+    activateDots(currentSlide);
+  };
 
+  //右側のボタンの実装 = 次のスライドに移動するためのもの
+  btnRight.addEventListener('click',nextSlide);
+    //次のスライドに移動するのは、基本的にtransformのプロパティの値を変えるだけ
+    //translateX()の値を変えるだけ
+    //nextSlideは上に関数で定義したの
+  btnLeft.addEventListener('click',previousSlide);
+
+  //右左のキーボードを押すだけで、スライドが動くような実装
+  document.addEventListener('keydown',function(e){
+    // console.log(e);
+    //→はArrowRightとしてkeyが登録してある
+    //←はArrowLeftとしてkeyが登録してある
+    e.key === 'ArrowLeft' && previousSlide();
+    e.key === 'ArrowRight' && nextSlide();
+    //これで、キーダウンした時に、その関数が呼び出される。
+    //こんな感じでできるから、関数に入れると言うのはとても大事ね。
+  });
+
+  dotContainer.addEventListener('click',function(e){
+    if(e.target.classList.contains('dots__dot')){
+      // console.log('DOT');
+      const {slide} = e.target.dataset;
+      gotoSlide(slide);
+      //dots__dotというクラスがついているならば、slideはそのスライドと一致して、gotoSlideと一致致します
+    };
+    //今表示しているindexと同じドットは濃いグレーに色が変化する。
+    //dots_dot--activeクラスがついています。
+  });
+};
+slider();
 
 /////////////////////////////////////////////////////
 //185 How the DOM Really Works
